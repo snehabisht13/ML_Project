@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cluster {{ cluster_id }} - Customers</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        .button {
+            color: green;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .coupon-type {
+            font-style: italic;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Customers in Cluster {{ cluster_id }}</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Customer ID</th>
+                    <th>Email</th>
+                    <th>Spending Score</th>
+                    <th>Coupon Type</th>
+                    <th>Send Coupon</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for customer in customers %}
+                <tr>
+                    <td>{{ customer['CustomerID'] }}</td>
+                    <td>{{ customer['email'] }}</td>
+                    <td>{{ customer['Spending Score (1-100)'] }}</td>
+                    <td class="coupon-type">
+                        {% if customer['Spending Score (1-100)'] >= 80 %}
+                            Premium Discount Coupon
+                        {% elif customer['Spending Score (1-100)'] >= 50 %}
+                            Standard Discount Coupon
+                        {% else %}
+                            Budget Coupon
+                        {% endif %}
+                    </td>
+                    <td><a href="{{ url_for('send_coupon', customer_id=customer['CustomerID']) }}" class="button">Send Coupon</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

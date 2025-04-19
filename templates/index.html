@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cluster Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        canvas {
+            width: 100%;
+            height: 300px;
+        }
+        .button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .cluster-link {
+            text-decoration: none;
+            color: white;
+            background-color: #4CAF50;
+            padding: 12px 25px;
+            border-radius: 5px;
+            display: inline-block;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+            margin-bottom: 10px;
+        }
+        .cluster-link:hover {
+            background-color: #45a049;
+        }
+        .cluster-info {
+            margin-top: 20px;
+            font-size: 16px;
+        }
+        .cluster-description {
+            background-color: #f4f4f9;
+            border-left: 5px solid #4CAF50;
+            padding: 10px;
+            margin-top: 15px;
+        }
+        .cluster-info p {
+            margin: 5px 0;
+        }
+        .cluster-info .method {
+            font-weight: bold;
+        }
+        .cluster-chart-container {
+            margin-bottom: 30px;
+        }
+        .cluster-header {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .cluster-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .cluster-list li {
+            margin-bottom: 10px;
+        }
+        .form-container {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f4f4f9;
+            border-radius: 8px;
+        }
+        .form-container input {
+            padding: 10px;
+            margin: 10px 0;
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .form-container button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            border-radius: 4px;
+        }
+        .form-container button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Cluster Dashboard</h1>
+        <p>Select a cluster to see customer details and send coupons.</p>
+
+        <div class="cluster-chart-container">
+            <canvas id="clusterChart"></canvas>
+        </div>
+
+        <div id="clusterData" class="cluster-info">
+            <p class="cluster-header">Cluster Information</p>
+            <p>Clusters are segmented based on customer spending patterns and visit frequency.</p>
+            <div class="cluster-description">
+                <p><span class="method">Clustering Method:</span> K-means clustering</p>
+                <p><span class="method">Base Attributes:</span> Spending score, frequency of visits, purchase categories</p>
+            </div>
+        </div>
+
+        <div style="text-align:center; margin-top: 30px;">
+            <h3>Cluster Links</h3>
+            <ul class="cluster-list">
+                <li><a href="/cluster/0" class="cluster-link">View Cluster 0 Customers</a></li>
+                <li><a href="/cluster/1" class="cluster-link">View Cluster 1 Customers</a></li>
+                <li><a href="/cluster/2" class="cluster-link">View Cluster 2 Customers</a></li>
+                <li><a href="/cluster/3" class="cluster-link">View Cluster 3 Customers</a></li>
+                <li><a href="/cluster/4" class="cluster-link">View Cluster 4 Customers</a></li>
+            </ul>
+        </div>
+
+        <!-- New Customer Input Form
+        <div class="form-container">
+            <h3>Enter New Customer Details</h3>
+            <form action="/predict_cluster" method="POST">
+                <input type="number" name="income" placeholder="Enter Annual Income (in $K)" required>
+                <input type="number" name="spending_score" placeholder="Enter Spending Score (1-100)" required>
+                <input type="email" name="email" placeholder="Enter Email Address" required>
+                <button type="submit">Predict Cluster & Send Coupon</button>
+            </form>
+        </div> -->
+
+        <!-- {% if predicted_cluster is not none %}
+            <div class="cluster-info">
+                <h3>Predicted Cluster: {{ predicted_cluster }}</h3>
+                <p>Annual Income: ${{ income }}K</p>
+                <p>Spending Score: {{ spending_score }}</p>
+                <p>Recommended Coupon: {{ coupon }}</p>
+            </div>
+        {% endif %}
+    </div> -->
+
+    <script>
+        const clusterCounts = {{ cluster_counts | tojson }};  // Dynamic cluster counts from Flask
+        const clusterRanges = {{ cluster_ranges | tojson }};  // Dynamic cluster ranges from Flask
+
+        const ctx = document.getElementById('clusterChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: clusterRanges,
+                datasets: [{
+                    label: 'Number of Customers in Each Cluster',
+                    data: clusterCounts,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
