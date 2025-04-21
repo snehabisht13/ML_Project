@@ -38,6 +38,13 @@
 <body>
     <div class="container">
         <h1>Customers in Cluster {{ cluster_id }}</h1>
+        {% set cluster_names = [
+            "Low income, low spender",
+            "Moderate income, moderate spender",
+            "High income, frequent spender",
+            "Mid income, average spender",
+        ] %}
+        <p><strong>Cluster Description:</strong> {{ cluster_names[cluster_id] }}</p>
         <table>
             <thead>
                 <tr>
@@ -54,14 +61,15 @@
                     <td>{{ customer['CustomerID'] }}</td>
                     <td>{{ customer['email'] }}</td>
                     <td>{{ customer['Spending Score (1-100)'] }}</td>
+                 
                     <td class="coupon-type">
-                        {% if customer['Spending Score (1-100)'] >= 80 %}
-                            Premium Discount Coupon
-                        {% elif customer['Spending Score (1-100)'] >= 50 %}
-                            Standard Discount Coupon
-                        {% else %}
-                            Budget Coupon
-                        {% endif %}
+                        {% set cluster_coupon = {
+                            0: "💎 20% off Premium Brands",
+                            1: "🛒 Save on Essentials - Flat ₹100 Off",
+                            2: "👗 Fashion Fiesta: Buy 1 Get 1",
+                            3: "🎁 Loyalty Bonus: Extra Points",
+                        } %}
+                        {{ cluster_coupon[cluster_id] }}
                     </td>
                     <td><a href="{{ url_for('send_coupon', customer_id=customer['CustomerID']) }}" class="button">Send Coupon</a></td>
                 </tr>

@@ -124,30 +124,32 @@
                 <li><a href="/cluster/1" class="cluster-link">View Cluster 1 Customers</a></li>
                 <li><a href="/cluster/2" class="cluster-link">View Cluster 2 Customers</a></li>
                 <li><a href="/cluster/3" class="cluster-link">View Cluster 3 Customers</a></li>
-                <li><a href="/cluster/4" class="cluster-link">View Cluster 4 Customers</a></li>
             </ul>
         </div>
 
-        <!-- New Customer Input Form
-        <div class="form-container">
-            <h3>Enter New Customer Details</h3>
-            <form action="/predict_cluster" method="POST">
-                <input type="number" name="income" placeholder="Enter Annual Income (in $K)" required>
-                <input type="number" name="spending_score" placeholder="Enter Spending Score (1-100)" required>
-                <input type="email" name="email" placeholder="Enter Email Address" required>
-                <button type="submit">Predict Cluster & Send Coupon</button>
-            </form>
-        </div> -->
+        <!-- new form  -->
+         <!-- Add this inside your <body>, just after the cluster links section -->
 
-        <!-- {% if predicted_cluster is not none %}
-            <div class="cluster-info">
-                <h3>Predicted Cluster: {{ predicted_cluster }}</h3>
-                <p>Annual Income: ${{ income }}K</p>
-                <p>Spending Score: {{ spending_score }}</p>
-                <p>Recommended Coupon: {{ coupon }}</p>
-            </div>
-        {% endif %}
-    </div> -->
+<div class="form-container">
+    <h2>Get Your Coupon Recommendation</h2>
+    <form action="/recommend-coupon" method="POST">
+        <label for="customer_id">Customer ID:</label>
+        <input type="text" id="customer_id" name="customer_id" required>
+
+        <label for="email">Email Address:</label>
+        <input type="email" id="email" name="email" required>
+
+        <label for="spending_score">Spending Score (1-100):</label>
+        <input type="number" id="spending_score" name="spending_score" min="1" max="100" required>
+
+        <label for="annual_income">Annual Income ($):</label>
+        <input type="number" id="annual_income" name="annual_income" required>
+
+        <button type="submit">Get Coupon Recommendation</button>
+    </form>
+</div>
+
+
 
     <script>
         const clusterCounts = {{ cluster_counts | tojson }};  // Dynamic cluster counts from Flask

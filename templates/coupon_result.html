@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Coupon Recommendation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f9f9f9;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #4CAF50;
+        }
+        .info {
+            margin: 15px 0;
+        }
+        .coupon {
+            background-color: #e1f7e1;
+            padding: 15px;
+            border-left: 5px solid #4CAF50;
+            font-size: 18px;
+        }
+        form {
+            margin-top: 20px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Coupon Recommendation</h2>
+        <div class="info">
+            <p><strong>Customer ID:</strong> {{ customer_id }}</p>
+            <p><strong>Email:</strong> {{ email }}</p>
+            <p><strong>Spending Score:</strong> {{ spending_score }}</p>
+            <p><strong>Annual Income:</strong> {{ annual_income }}</p>
+            <p><strong>Predicted Cluster:</strong> {{ cluster }}</p>
+        
+            {% set cluster_names = [
+                "Low income, low spender",
+                "Moderate income, moderate spender",
+                "High income, frequent spender",
+                "Mid income, average spender",
+            ] %}
+            <p><strong>Cluster Description:</strong> {{ cluster_names[cluster] }}</p>
+        </div>
+        
+        <div class="coupon">
+            Recommended Coupon: {{ coupon }}
+        </div>
+
+        <form action="/send_coupon_direct" method="POST">
+            <input type="hidden" name="email" value="{{ email }}">
+            <input type="hidden" name="coupon" value="{{ coupon }}">
+            <button type="submit">Send Coupon via Email</button>
+        </form>
+    </div>
+</body>
+</html>
