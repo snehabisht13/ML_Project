@@ -2,6 +2,10 @@ from flask import Flask, render_template, jsonify, request
 from flask_mail import Mail, Message
 import pandas as pd
 from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+from sklearn.impute import SimpleImputer
+from sklearn.metrics import silhouette_score
+
 
 app = Flask(__name__)
 
@@ -18,10 +22,24 @@ mail = Mail(app)
 # Load and process data
 df = pd.read_csv('Mall_Customers_with_email.csv')
 
+# hanlding missing data 
+imputer = SimpleImputer(strategy='mean')
+df[['Annual Income (k$)', 'Spending Score (1-100)']] = imputer.fit_transform(df[['Annual Income (k$)', 'Spending Score (1-100)']])
+
+# Scaling: Normalize the features to have zero mean and unit variance
+scaler = StandardScaler()
+df[['Annual Income (k$)', 'Spending Score (1-100)']] = scaler.fit_transform(df[['Annual Income (k$)', 'Spending Score (1-100)']])
+
+# Feature Selection: We will use KMeans with the selected features
+X = df[['Annual Income (k$)', 'Spending Score (1-100)']]
+
 # Clustering based on Income & Spending Score
 X = df[['Annual Income (k$)', 'Spending Score (1-100)']]
 kmeans = KMeans(n_clusters=4, random_state=42)
 df['Cluster'] = kmeans.fit_predict(X)
+
+# Assuming 'X' contains the features used for clustering
+silhouette_avg = silhouette_score(X, df['Cluster'])
 
 # Basic coupon mapping
 def recommend_coupon(cluster_id):
@@ -134,8 +152,10 @@ def home():
 
     # Ensure labels are ordered by cluster index
     cluster_ranges = [cluster_labels[i] for i in range(4)]
+    # Compute the silhouette score
+    silhouette_avg = silhouette_score(X, df['Cluster'])
 
-    return render_template('index.html', cluster_counts=cluster_counts, cluster_ranges=cluster_ranges)
+    return render_template('index.html', cluster_counts=cluster_counts, cluster_ranges=cluster_ranges, silhouette_score=round(silhouette_avg, 2))
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,14 +11,17 @@
             font-family: Arial, sans-serif;
             margin: 20px;
         }
+
         .container {
             max-width: 900px;
             margin: 0 auto;
         }
+
         canvas {
             width: 100%;
             height: 300px;
         }
+
         .button {
             background-color: #4CAF50;
             color: white;
@@ -26,6 +30,7 @@
             cursor: pointer;
             font-size: 16px;
         }
+
         .cluster-link {
             text-decoration: none;
             color: white;
@@ -37,45 +42,56 @@
             transition: background-color 0.3s ease;
             margin-bottom: 10px;
         }
+
         .cluster-link:hover {
             background-color: #45a049;
         }
+
         .cluster-info {
             margin-top: 20px;
             font-size: 16px;
         }
+
         .cluster-description {
             background-color: #f4f4f9;
             border-left: 5px solid #4CAF50;
             padding: 10px;
             margin-top: 15px;
         }
+
         .cluster-info p {
             margin: 5px 0;
         }
+
         .cluster-info .method {
             font-weight: bold;
         }
+
         .cluster-chart-container {
             margin-bottom: 30px;
         }
+
         .cluster-header {
             font-size: 18px;
             font-weight: bold;
         }
+
         .cluster-list {
             list-style-type: none;
             padding-left: 0;
         }
+
         .cluster-list li {
             margin-bottom: 10px;
         }
+
         .form-container {
             margin-top: 30px;
             padding: 20px;
             background-color: #f4f4f9;
             border-radius: 8px;
         }
+
         .form-container input {
             padding: 10px;
             margin: 10px 0;
@@ -84,6 +100,7 @@
             border: 1px solid #ccc;
             border-radius: 4px;
         }
+
         .form-container button {
             background-color: #4CAF50;
             color: white;
@@ -94,15 +111,19 @@
             width: 100%;
             border-radius: 4px;
         }
+
         .form-container button:hover {
             background-color: #45a049;
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1>Cluster Dashboard</h1>
         <p>Select a cluster to see customer details and send coupons.</p>
+        <h2>Clustering Performance</h2>
+        <p>Silhouette Score: {{ silhouette_score }}</p>
 
         <div class="cluster-chart-container">
             <canvas id="clusterChart"></canvas>
@@ -113,7 +134,8 @@
             <p>Clusters are segmented based on customer spending patterns and visit frequency.</p>
             <div class="cluster-description">
                 <p><span class="method">Clustering Method:</span> K-means clustering</p>
-                <p><span class="method">Base Attributes:</span> Spending score, frequency of visits, purchase categories</p>
+                <p><span class="method">Base Attributes:</span> Spending score, frequency of visits, purchase categories
+                </p>
             </div>
         </div>
 
@@ -128,54 +150,55 @@
         </div>
 
         <!-- new form  -->
-         <!-- Add this inside your <body>, just after the cluster links section -->
+        <!-- Add this inside your <body>, just after the cluster links section -->
 
-<div class="form-container">
-    <h2>Get Your Coupon Recommendation</h2>
-    <form action="/recommend-coupon" method="POST">
-        <label for="customer_id">Customer ID:</label>
-        <input type="text" id="customer_id" name="customer_id" required>
+        <div class="form-container">
+            <h2>Get Your Coupon Recommendation</h2>
+            <form action="/recommend-coupon" method="POST">
+                <label for="customer_id">Customer ID:</label>
+                <input type="text" id="customer_id" name="customer_id" required>
 
-        <label for="email">Email Address:</label>
-        <input type="email" id="email" name="email" required>
+                <label for="email">Email Address:</label>
+                <input type="email" id="email" name="email" required>
 
-        <label for="spending_score">Spending Score (1-100):</label>
-        <input type="number" id="spending_score" name="spending_score" min="1" max="100" required>
+                <label for="spending_score">Spending Score (1-100):</label>
+                <input type="number" id="spending_score" name="spending_score" min="1" max="100" required>
 
-        <label for="annual_income">Annual Income ($):</label>
-        <input type="number" id="annual_income" name="annual_income" required>
+                <label for="annual_income">Annual Income ($):</label>
+                <input type="number" id="annual_income" name="annual_income" required>
 
-        <button type="submit">Get Coupon Recommendation</button>
-    </form>
-</div>
+                <button type="submit">Get Coupon Recommendation</button>
+            </form>
+        </div>
 
 
 
-    <script>
-        const clusterCounts = {{ cluster_counts | tojson }};  // Dynamic cluster counts from Flask
-        const clusterRanges = {{ cluster_ranges | tojson }};  // Dynamic cluster ranges from Flask
+        <script>
+            const clusterCounts = {{ cluster_counts | tojson }};  // Dynamic cluster counts from Flask
+            const clusterRanges = {{ cluster_ranges | tojson }};  // Dynamic cluster ranges from Flask
 
-        const ctx = document.getElementById('clusterChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: clusterRanges,
-                datasets: [{
-                    label: 'Number of Customers in Each Cluster',
-                    data: clusterCounts,
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
+            const ctx = document.getElementById('clusterChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: clusterRanges,
+                    datasets: [{
+                        label: 'Number of Customers in Each Cluster',
+                        data: clusterCounts,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
                     }
                 }
-            }
-        });
-    </script>
+            });
+        </script>
 </body>
+
 </html>
